@@ -122,7 +122,7 @@ const MUSIC_LIBRARY = [
     songs: [
       {
         title: "Nadaan Parindey",
-        artist: "Static Youth",
+        artist: "From rockstar movie",
         file: "musics/Nadaan Parindey.mp3"
        }
     ]
