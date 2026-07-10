@@ -14,7 +14,31 @@ const MUSIC_LIBRARY = [
         title: "Chahun Mai ya na",
         artist: "Ashiqui 2",
         thumb: "ashiqui.png",
-        file: "musics/Chahun Mai Ya Na.mp3"
+        file: "musics/Chahun Mai Ya Naa.mp3"
+      },
+      {
+        title: "Aashiqui (The Love Theme)",
+        artist: "Ashiqui 2",
+        thumb: "ashiqui.png",
+        file: "musics/Aashiqui (The Love Theme).mp3"
+      },
+      {
+        title: "Sunn Raha Hai (Male)",
+        artist: "Ashiqui 2",
+        thumb: "ashiqui.png",
+        file: "musics/Sunn Raha Hai (Male).mp3"
+      },
+      {
+        title: "Tum Hi Ho",
+        artist: "Ashiqui 2",
+        thumb: "ashiqui.png",
+        file: "musics/Tum Hi Ho.mp3"
+      },
+      {
+        title: "Milne Hai Mujhse Aayi",
+        artist: "Ashiqui 2",
+        thumb: "ashiqui.png",
+        file: "musics/Milne Hai Mujhse Aayi.mp3"
       }
     ]
   },
