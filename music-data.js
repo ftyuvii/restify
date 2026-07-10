@@ -1,14 +1,14 @@
 const privateTracklist = [
     {
         title: "Asaan Nhi Yahan",
-        artist: "Ashiqui 2",
-        thumb: "Ashiqui.png",
+        artist: "ashiqui 2",
+        thumb: "ashiqui.png",
         file: "musics/Aasaan Nhi Yahan.mp3"
     },
     {
         title: "Chahun Mai ya na",
         artist: "Ashiqui 2",
-        thumb: "Ashiqui.png",
+        thumb: "ashiqui.png",
         file: "musics/Chahun Mai Ya Na.mp3"
     },
         {
