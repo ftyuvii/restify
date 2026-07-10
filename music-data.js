@@ -34,5 +34,47 @@ const privateTracklist = [
         artist: "Karan Aujla",
         thumb: "ppop.png",
         file: "musics/For A Reason.mp3"
+    },
+{
+        title: "Daytona",
+        artist: "Karan Aujla",
+        thumb: "ppop.png",
+        file: "musics/Daytona.mp3"
+    },
+{
+        title: "Youre U Tho",
+        artist: "Karan Aujla",
+        thumb: "ppop.png",
+        file: "musics/Youre U Tho.mp3"
+    },
+{
+        title: "P-Pop Cultue",
+        artist: "Karan Aujla",
+        thumb: "ppop.png",
+        file: "musics/P-POP CULTURE.mp3"
+    },
+{
+        title: "Flip-Side (Sandys Interlude)",
+        artist: "Karan Aujla",
+        thumb: "ppop.png",
+        file: "musics/Flip-Side (Sandys Interlude).mp3"
+    },
+{
+        title: "I Really Do...",
+        artist: "Karan Aujla",
+        thumb: "ppop.png",
+        file: "musics/I Really do....mp3"
+    },
+{
+        title: "Ima Do My Thiiing",
+        artist: "Karan Aujla",
+        thumb: "ppop.png",
+        file: "musics/Ima Do My Thiiing.mp3"
+    },
+{
+        title: "HIM",
+        artist: "Karan Aujla",
+        thumb: "ppop.png",
+        file: "musics/HIM..mp3"
     }
 ];
