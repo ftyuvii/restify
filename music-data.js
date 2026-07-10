@@ -116,20 +116,15 @@ const MUSIC_LIBRARY = [
     ]
   },
   {
-    id: "punk",
-    title: "Punk",
-    cover: "https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=700&q=80",
+    id: "rockstar",
+    title: "Rockstar 2011",
+    cover: "rockstar.png",
     songs: [
       {
-        title: "Riot Girl",
+        title: "Nadaan Parindey",
         artist: "Static Youth",
-        file: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3"
-      },
-      {
-        title: "Broken Chains",
-        artist: "Static Youth",
-        file: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3"
-      }
+        file: "musics/Nadaan Parindey.mp3"
+       }
     ]
   },
   {
