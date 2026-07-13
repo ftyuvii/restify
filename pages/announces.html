@@ -10,7 +10,7 @@
 
   <div class="app-shell">
     <div class="view pos-center">
-      
+
       <div class="sub-header">
         <button class="back-btn" onclick="window.history.back()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -22,9 +22,37 @@
       </div>
 
       <div class="scroll-body" style="padding-top: 12px;">
-        
-        <div class="announcements-container" id="announcement-feed">
+
+        <div class="announcements-container">
+
+          <div class="announcement-card critical">
+            <div class="announcement-meta-row">
+              <span class="announcement-badge">SYSTEM UPDATE</span>
+              <span class="announcement-date">Today, 02:46 PM</span>
+            </div>
+            <h2 class="announcement-title">Free Fire Tourney Engine v2.0</h2>
+            <p class="announcement-desc">We have fully optimized the live points table generation algorithms for Winter Walkers and Warbound Esports. Custom layouts are now rendering at 60fps.</p>
           </div>
+
+          <div class="announcement-card feature">
+            <div class="announcement-meta-row">
+              <span class="announcement-badge">UI OPTIMIZATION</span>
+              <span class="announcement-date">Yesterday</span>
+            </div>
+            <h2 class="announcement-title">Graphics Pipeline Reconstructed</h2>
+            <p class="announcement-desc">Removed overlapping assets and introduced premium typography nodes for team logos. Profile syncing with Firebase is now direct and fast.</p>
+          </div>
+
+          <div class="announcement-card standard">
+            <div class="announcement-meta-row">
+              <span class="announcement-badge">DEPLOYMENT</span>
+              <span class="announcement-date">11 July 2026</span>
+            </div>
+            <h2 class="announcement-title">Welcome to High-Fidelity App Shell</h2>
+            <p class="announcement-desc">Initial deployment complete. Integrated red-crimson dark ambient accents, side menu layers, and high-performance glass component overlays.</p>
+          </div>
+
+        </div>
 
         <div class="bottom-spacer"></div>
       </div>
@@ -32,62 +60,5 @@
     </div>
   </div>
 
-  <script>
-    // ADMIN DATA STORE: Naye updates bina purane delete kiye top par push karte jao
-    const announcementsData = [
-      {
-        id: 3,
-        title: "Free Fire Tourney Engine v2.0",
-        desc: "We have fully optimized the live points table generation algorithms for Winter Walkers and Warbound Esports. Custom layouts are now rendering at 60fps.",
-        date: "Today, 02:46 PM",
-        tag: "SYSTEM UPDATE",
-        type: "critical" // options: critical, feature, standard
-      },
-      {
-        id: 2,
-        title: "Graphics Pipeline Reconstructed",
-        desc: "Removed overlapping assets and introduced premium typography nodes for team logos. Profile syncing with Firebase is now direct and fast.",
-        date: "Yesterday",
-        tag: "UI OPTIMIZATION",
-        type: "feature"
-      },
-      {
-        id: 1,
-        title: "Welcome to High-Fidelity App Shell",
-        desc: "Initial deployment complete. Integrated red-crimson dark ambient accents, side menu layers, and high-performance glass component overlays.",
-        date: "11 July 2026",
-        tag: "DEPLOYMENT",
-        type: "standard"
-      }
-    ];
-
-    function loadAnnouncements() {
-      const feed = document.getElementById('announcement-feed');
-      feed.innerHTML = '';
-
-      if (announcementsData.length === 0) {
-        feed.innerHTML = `<div class="no-results">No recent updates published by admin.</div>`;
-        return;
-      }
-
-      announcementsData.forEach(item => {
-        const card = document.createElement('div');
-        card.className = `announcement-card ${item.type}`;
-        
-        card.innerHTML = `
-          <div class="announcement-meta-row">
-            <span class="announcement-badge">${item.tag}</span>
-            <span class="announcement-date">${item.date}</span>
-          </div>
-          <h2 class="announcement-title">${item.title}</h2>
-          <p class="announcement-desc">${item.desc}</p>
-        `;
-        
-        feed.appendChild(card);
-      });
-    }
-
-    document.addEventListener('DOMContentLoaded', loadAnnouncements);
-  </script>
 </body>
 </html>
