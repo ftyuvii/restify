@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>What's New</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../src/style.css">
+<script src="https://unpkg.com/lucide@latest" defer></script>
+<style>
+html, body { height: auto; min-height: 100%; width: 100%; overflow-y: auto; display: block; }
+body { background: var(--bg); }
+</style>
+</head>
+<body>
+
+<div class="frame-page-body">
+  <div class="frame-intro">
+    <h1>What's New</h1>
+    <p>Announcements, feature drops, and patch updates for Restify.</p>
+  </div>
+  <div class="announcements-container" id="announcements-list"></div>
+</div>
+
+<script>
+const ANNOUNCEMENTS = [
+  {
+    date: 'Jul 13, 2026',
+    type: 'feature',
+    title: 'Uninterrupted playback across every page',
+    desc: 'Your music now keeps playing while you browse Explore Albums, What\'s New, or About Us. Navigation no longer stops your song.'
+  },
+  {
+    date: 'Jul 13, 2026',
+    type: 'feature',
+    title: 'Sign-in removed',
+    desc: 'Restify now opens straight into the app. Your profile name and photo are saved locally on your device and can be edited anytime.'
+  },
+  {
+    date: 'Jul 13, 2026',
+    type: 'standard',
+    title: 'Explore Albums redesigned',
+    desc: 'A clean, beginner friendly grid layout makes it easier to browse and discover every album on Restify.'
+  },
+  {
+    date: 'Jul 13, 2026',
+    type: 'critical',
+    title: 'Playback stability fixes',
+    desc: 'Resolved buffering issues that could interrupt smooth playback on slower connections.'
+  }
+];
+
+function renderAnnouncements() {
+  const list = document.getElementById('announcements-list');
+  if (!ANNOUNCEMENTS.length) {
+    list.innerHTML = '<div class="frame-empty"><div>No announcements yet. Check back soon.</div></div>';
+    return;
+  }
+  list.innerHTML = ANNOUNCEMENTS.map(item => `
+    <div class="announcement-card ${item.type}">
+      <div class="announcement-meta-row">
+        <span class="announcement-badge">${item.type}</span>
+        <span class="announcement-date">${item.date}</span>
+      </div>
+      <div class="announcement-title">${item.title}</div>
+      <div class="announcement-desc">${item.desc}</div>
+    </div>
+  `).join('');
+}
+
+renderAnnouncements();
+if (window.lucide) lucide.createIcons();
+</script>
+
+</body>
+</html>
