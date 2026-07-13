@@ -1,122 +1,81 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>About Us</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../src/style.css">
-<script src="https://unpkg.com/lucide@latest" defer></script>
-<style>
-html, body { height: auto; min-height: 100%; width: 100%; overflow-y: auto; display: block; }
-body { background: var(--bg); }
-</style>
-</head>
-<body>
-
 <div class="frame-page-body">
+
   <div class="about-hero">
-    <div class="about-photo-ring" id="about-photo-trigger">
-      <img id="about-photo" src="" alt="">
-      <div class="about-photo-edit"><i data-lucide="pencil"></i></div>
+
+    <div class="about-photo-ring">
+      <img src="../src/icon.svg" alt="Restify">
     </div>
-    <input type="file" accept="image/*" id="about-photo-input" class="about-photo-input">
-    <div class="about-name" id="about-name">Your Name</div>
-    <div class="about-role" id="about-role">Founder &amp; Curator, Restify</div>
-    <p class="about-bio" id="about-bio">Tell people who you are. Edit the PROFILE object at the top of this file to update your name, role, bio, and links.</p>
-    <div class="about-socials" id="about-socials"></div>
+
+    <div class="about-name">Yuvraj Ab</div>
+
+    <div class="about-role">
+      Developer & Architecture, Restify
+    </div>
+
+    <p class="about-bio">
+      Hey, I'm Yuvraj — the developer behind Restify.
+
+Restify started as a personal project driven by my interest in music, design, and building clean user experiences. The goal is simple: create a lightweight, smooth, and distraction-free music platform focused on listening, not clutter.
+
+I enjoy experimenting with web technologies, UI design, and new ideas that can make digital products feel faster, cleaner, and more enjoyable to use. Restify is where I test those ideas and continue learning as a developer.
+
+This project is not a public music streaming platform and is not intended for commercial distribution. Any audio content used during development, testing, or demonstrations is included solely for educational and project-development purposes. Restify is a private project created to learn, experiment, and showcase technical implementation rather than to publicly publish or distribute copyrighted music.
+
+Thanks for checking out the project and being part of its journey.
+    </p>
+
+    <div class="about-socials">
+      <a class="about-social-btn" href="https://github.com/ftyuvii" target="_blank">
+        <i data-lucide="github"></i>
+        <span>GitHub</span>
+      </a>
+
+      <a class="about-social-btn" href="https://instagram.com/ftyuvii" target="_blank">
+        <i data-lucide="instagram"></i>
+        <span>Instagram</span>
+      </a>
+
+      <a class="about-social-btn" href="mailto: claudeos125@gmail.com">
+        <i data-lucide="mail"></i>
+        <span>Email</span>
+      </a>
+    </div>
+
   </div>
 
   <div class="about-section">
-    <div class="about-section-title">What I'm into</div>
-    <div class="about-chip-row" id="about-chips"></div>
+    <div class="about-section-title">What I'm Into</div>
+
+    <div class="about-chip-row">
+      <div class="about-chip">Music</div>
+      <div class="about-chip">Web Development</div>
+      <div class="about-chip">UI Design</div>
+      <div class="about-chip">React</div>
+      <div class="about-chip">Open Source</div>
+    </div>
   </div>
 
   <div class="about-section">
-    <div class="about-section-title">Restify at a glance</div>
-    <div class="about-stat-grid" id="about-stats"></div>
+    <div class="about-section-title">Restify At A Glance</div>
+
+    <div class="about-stat-grid">
+
+      <div class="about-stat-card">
+        <div class="about-stat-value">4</div>
+        <div class="about-stat-label">Pages</div>
+      </div>
+
+      <div class="about-stat-card">
+        <div class="about-stat-value">0</div>
+        <div class="about-stat-label">Ads</div>
+      </div>
+
+      <div class="about-stat-card">
+        <div class="about-stat-value">∞</div>
+        <div class="about-stat-label">Songs</div>
+      </div>
+
+    </div>
   </div>
+
 </div>
-
-<script>
-const PROFILE = {
-  name: 'Your Name',
-  role: 'Founder & Curator, Restify',
-  bio: 'Building Restify as a smooth, ad-free listening experience. Edit this bio anytime to share who you are and what you love about music.',
-  photo: '',
-  interests: ['Lo-fi', 'Indie', 'Production', 'Playlist curation'],
-  stats: [
-    { value: '4', label: 'Pages' },
-    { value: '0', label: 'Ads' },
-    { value: '∞', label: 'Songs' }
-  ],
-  socials: [
-    { label: 'Instagram', icon: 'instagram', url: '#' },
-    { label: 'GitHub', icon: 'github', url: '#' },
-    { label: 'Email', icon: 'mail', url: 'mailto:hello@example.com' }
-  ]
-};
-
-const PHOTO_KEY = 'restify_about_photo';
-
-function loadStoredPhoto() {
-  try { return localStorage.getItem(PHOTO_KEY) || ''; } catch (e) { return ''; }
-}
-
-function render() {
-  document.getElementById('about-name').textContent = PROFILE.name;
-  document.getElementById('about-role').textContent = PROFILE.role;
-  document.getElementById('about-bio').textContent = PROFILE.bio;
-
-  const storedPhoto = loadStoredPhoto();
-  const photo = storedPhoto || PROFILE.photo;
-  const img = document.getElementById('about-photo');
-  if (photo) {
-    img.src = photo;
-  } else {
-    img.src = 'https://api.dicebear.com/7.x/shapes/svg?seed=' + encodeURIComponent(PROFILE.name);
-  }
-
-  document.getElementById('about-socials').innerHTML = PROFILE.socials.map(s => `
-    <a class="about-social-btn" href="${s.url}" target="_blank" rel="noopener">
-      <i data-lucide="${s.icon}"></i>
-      <span>${s.label}</span>
-    </a>
-  `).join('');
-
-  document.getElementById('about-chips').innerHTML = PROFILE.interests.map(i => `
-    <div class="about-chip">${i}</div>
-  `).join('');
-
-  document.getElementById('about-stats').innerHTML = PROFILE.stats.map(s => `
-    <div class="about-stat-card">
-      <div class="about-stat-value">${s.value}</div>
-      <div class="about-stat-label">${s.label}</div>
-    </div>
-  `).join('');
-
-  if (window.lucide) lucide.createIcons();
-}
-
-document.getElementById('about-photo-trigger').addEventListener('click', () => {
-  document.getElementById('about-photo-input').click();
-});
-
-document.getElementById('about-photo-input').addEventListener('change', e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    try { localStorage.setItem(PHOTO_KEY, reader.result); } catch (e) {}
-    document.getElementById('about-photo').src = reader.result;
-  };
-  reader.readAsDataURL(file);
-});
-
-render();
-</script>
-
-</body>
-</html>
