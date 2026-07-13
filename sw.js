@@ -1,9 +1,9 @@
 const CACHE_NAME = 'restify-shell-v1';
 const SHELL_ASSETS = [
   './index.html',
-  './style.css',
-  './app.js',
-  './music-data.js',
+  'src/style.css',
+  'src/app.js',
+  'src/music-data.js',
   './manifest.json',
   './icon.svg'
 ];
