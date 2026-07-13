@@ -1,1 +1,108 @@
-..
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Announcements</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app-shell">
+    <div class="view pos-center">
+      
+      <div class="sub-header">
+        <button class="back-btn" onclick="window.history.back()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+        <span class="brand-title" style="font-size: 1.2rem; margin-left: 4px;">App <span>Announcements</span></span>
+      </div>
+
+      <div class="scroll-body" style="padding-top: 8px;">
+        
+        <div class="albums-grid" id="announcement-feed">
+          </div>
+
+        <div class="bottom-spacer"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // DATA LAYER: Naya announcement yahan sabse UPAR add karte jao.
+    // Purana delete nahi hoga, bas niche push hota jayega automatically.
+    const announcementsData = [
+      {
+        id: 3,
+        title: "Version 2.0 Update Rollout",
+        desc: "We have fixed the navigation menu conflicts and enhanced the sidebar rendering speeds. Enjoy the zero-lag fluid UI animations!",
+        date: "Today, 02:30 PM",
+        tag: "Update",
+        isImportant: true
+      },
+      {
+        id: 2,
+        title: "Server Maintenance Scheduled",
+        desc: "Our backend database system will undergo optimization tonight at 02:00 AM IST for approx 30 minutes. Registrations might be temporarily slow.",
+        date: "Yesterday",
+        tag: "Maintenance",
+        isImportant: false
+      },
+      {
+        id: 1,
+        title: "Welcome to the New UI Experience",
+        desc: "Welcome to the professional dark-crimson theme setup. Explore high-fidelity custom glass layouts and vinyl disk showcases inside your library panel.",
+        date: "11 July 2026",
+        tag: "Welcome",
+        isImportant: false
+      }
+    ];
+
+    // RENDER FUNCTION: Jo database arrays se HTML create karega
+    function loadAnnouncements() {
+      const feed = document.getElementById('announcement-feed');
+      feed.innerHTML = ''; // Clear template placeholders
+
+      if (announcementsData.length === 0) {
+        feed.innerHTML = `<div class="no-results">No announcements available at the moment.</div>`;
+        return;
+      }
+
+      announcementsData.forEach(item => {
+        // Tag Color logic based on metadata
+        let tagStyle = "background: var(--surface-3); color: var(--text-dim);";
+        if (item.isImportant) {
+          tagStyle = "background: rgba(230, 46, 58, 0.15); color: var(--red); font-weight: 600;";
+        } else if (item.tag === "Maintenance") {
+          tagStyle = "background: rgba(255, 193, 7, 0.12); color: #ffc107;";
+        }
+
+        const cardHTML = `
+          <div class="album-card" style="flex-direction: column; align-items: flex-start; gap: 8px; padding: 16px; margin-bottom: 12px; background: var(--surface-2); border: 1px solid var(--border-soft);">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+              <span style="font-size: 0.72rem; padding: 4px 10px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px; ${tagStyle}">
+                ${item.tag}
+              </span>
+              <span style="font-size: 0.75rem; color: var(--text-faint); font-weight: 500;">${item.date}</span>
+            </div>
+            <div class="card-label" style="padding-right: 0; font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: #fff; margin-top: 4px;">
+              ${item.title}
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-dim); line-height: 1.45; font-weight: 400; margin-top: 2px; user-select: text;">
+              ${item.desc}
+            </div>
+          </div>
+        `;
+        feed.insertAdjacentHTML('beforeend', cardHTML);
+      });
+    }
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', loadAnnouncements);
+  </script>
+</body>
+</html>
