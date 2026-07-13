@@ -340,17 +340,15 @@
 
 <script>
 const menuOpenBtn = document.getElementById('menu-open-btn');
-const sideMenu = document.getElementById('side-menu');
+const menuLayer = document.getElementById('menu-layer');
 const menuOverlay = document.getElementById('menu-overlay');
 
 function openMenu() {
-  sideMenu.classList.add('open');
-  menuOverlay.classList.add('open');
+  menuLayer.classList.add('open');
 }
 
 function closeMenu() {
-  sideMenu.classList.remove('open');
-  menuOverlay.classList.remove('open');
+  menuLayer.classList.remove('open');
 }
 
 menuOpenBtn.addEventListener('click', openMenu);
