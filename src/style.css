@@ -476,3 +476,204 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:0px;heig
 .album-card .card-count{position:absolute;top:50%;right:2px;transform:translateY(-50%);background:transparent;backdrop-filter:none;padding:0;color:var(--text-dim);font-size:.78rem;font-weight:500;}
 .skeleton-grid{display:flex;flex-direction:column;gap:10px;padding:4px 16px;}
 .skeleton-grid .skeleton{aspect-ratio:auto;height:52px;border-radius:8px;}
+
+.albums-showcase-container {
+  padding: 0 16px;
+  margin-top: 20px;
+}
+
+.showcase-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 12px;
+}
+
+.tab-pill {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #a0a0a5;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tab-pill.active {
+  background: #ffffff;
+  color: #0a0a0b;
+  border-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+}
+
+.showcase-content {
+  display: none;
+}
+
+.showcase-content.open {
+  display: block;
+  animation: fadeIn 0.4s ease forwards;
+}
+
+.modern-albums-mesh {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+@media(min-width: 768px) {
+  .modern-albums-mesh {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.mesh-album-card {
+  position: relative;
+  cursor: pointer;
+  group: hover;
+}
+
+.mesh-cover-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.mesh-cover-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.mesh-play-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 11, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mesh-play-overlay i {
+  width: 28px;
+  height: 28px;
+  color: #fff;
+  fill: #fff;
+}
+
+.mesh-album-card:hover .mesh-cover-wrap img {
+  transform: scale(1.05);
+}
+
+.mesh-album-card:hover .mesh-play-overlay {
+  opacity: 1;
+}
+
+.mesh-meta {
+  margin-top: 10px;
+  padding: 0 2px;
+}
+
+.mesh-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mesh-artist {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.75rem;
+  color: #808085;
+  margin-top: 2px;
+}
+
+.circle-albums-strip {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+@media(min-width: 768px) {
+  .circle-albums-strip {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.vinyl-album-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+.vinyl-disk-system {
+  position: relative;
+  width: 140px;
+  height: 140px;
+}
+
+.vinyl-jacket {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 4px 8px 24px rgba(0, 0, 0, 0.5);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.vinyl-plate {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, #2c2c2e 2px, #000000 70%);
+  border-radius: 50%;
+  box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.vinyl-center-label {
+  position: absolute;
+  top: 35%;
+  left: 35%;
+  width: 30%;
+  height: 30%;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid #000;
+}
+
+.vinyl-album-card:hover .vinyl-jacket {
+  transform: translateX(-25px) rotate(-5deg);
+}
+
+.vinyl-album-card:hover .vinyl-plate {
+  transform: translateX(25px) rotate(90deg);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
