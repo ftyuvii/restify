@@ -1,1 +1,165 @@
-html page
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Explore Albums — Restify</title>
+<meta name="theme-color" content="#0a0a0b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../src/style.css">
+<script src="https://unpkg.com/lucide@latest" defer></script>
+</head>
+<body>
+
+<div class="login-screen hide" id="login-screen">
+  <div class="login-ambient"></div>
+  <div class="login-top">
+    <div class="login-logo">♬</div>
+    <h1 class="login-brand">Restify<span>.</span></h1>
+    <p class="login-tagline">Smooth playbacks studio</p>
+  </div>
+  <div class="login-visual">
+    <div class="login-ring ring-a"></div>
+    <div class="login-ring ring-b"></div>
+    <div class="login-vinyl">
+      <div class="login-vinyl-shine"></div>
+      <div class="login-vinyl-groove"></div>
+      <div class="login-vinyl-core"><i data-lucide="music-2"></i></div>
+    </div>
+  </div>
+  <div class="login-footer">
+    <button class="google-btn" id="google-login-btn">
+      <svg viewBox="0 0 24 24" width="19" height="19">
+        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.18 2.12 1.21 6.54l4.11 3.22c.94-2.85 3.57-4.96 6.68-4.96z"/>
+        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.53-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-8.72z"/>
+        <path fill="#FBBC05" d="M5.32 14.24A7.16 7.16 0 0 1 4.91 12c0-.79.13-1.57.38-2.31V6.54H1.21A11.94 11.94 0 0 0 0 12c0 1.92.45 3.74 1.21 5.46l4.11-3.22z"/>
+        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.11 0-5.74-2.11-6.68-4.96H1.21v3.15C3.18 21.88 7.31 24 12 24z"/>
+      </svg>
+      <span>Continue with Google</span>
+    </button>
+    <p class="login-note">Secure sign-in &middot; Powered by Firebase</p>
+  </div>
+</div>
+
+<div class="app-shell">
+  <section class="view pos-center">
+    <div class="scroll-body">
+      
+      <header class="home-header">
+        <div class="brand-id">
+          <button class="menu-btn" id="menu-open-btn"><i data-lucide="menu"></i></button>
+          <div>
+            <div class="brand-title">Explore</div>
+            <div class="brand-sub">Premium Albums Showcase</div>
+          </div>
+        </div>
+        <div class="header-actions">
+          <div class="avatar-mark" id="avatar-mark">
+            <span id="avatar-fallback"></span>
+            <img id="user-avatar-img" alt="">
+          </div>
+        </div>
+      </header>
+
+      <div class="albums-showcase-container">
+        <div class="showcase-tabs">
+          <button class="tab-pill active" data-target="grid">Modern Grid</button>
+          <button class="tab-pill" data-target="vinyl">Vinyl Circles</button>
+        </div>
+
+        <div class="showcase-content open" id="showcase-grid">
+          <div class="modern-albums-mesh" id="mesh-target"></div>
+        </div>
+
+        <div class="showcase-content" id="showcase-vinyl">
+          <div class="circle-albums-strip" id="circle-target"></div>
+        </div>
+      </div>
+
+      <div class="bottom-spacer"></div>
+    </div>
+  </section>
+</div>
+
+<div class="menu-layer" id="menu-layer">
+  <div class="menu-overlay" id="menu-overlay"></div>
+  <nav class="side-menu" id="side-menu">
+    <div class="side-menu-header">
+      <div class="side-menu-mark">♬</div>
+      <div class="side-menu-brand">Restify<span>.</span></div>
+    </div>
+    <a class="side-menu-item" href="../index.html">
+      <i data-lucide="home"></i>
+      <span>Home</span>
+    </a>
+    <a class="side-menu-item active" href="albums.html">
+      <i data-lucide="layout-grid"></i>
+      <span>Explore Albums</span>
+    </a>
+    <a class="side-menu-item" href="announces.html">
+      <i data-lucide="bell"></i>
+      <span>What's New</span>
+      <span class="menu-dot"></span>
+    </a>
+    <a class="side-menu-item" href="artistforums.html">
+      <i data-lucide="upload"></i>
+      <span>Apply for Artist</span>
+    </a>
+  </nav>
+</div>
+
+<div class="mini-player" id="mini-player" style="display: none;">
+  <div class="mini-progress"><div class="mini-progress-fill" id="mini-progress-fill"></div></div>
+  <img class="mini-thumb" id="mini-thumb" src="" alt="">
+  <div class="mini-info" id="mini-info-tap">
+    <div class="mini-title" id="mini-title">—</div>
+    <div class="mini-artist" id="mini-artist">—</div>
+  </div>
+  <div class="mini-controls">
+    <button class="mini-btn" id="mini-prev"><i data-lucide="skip-back"></i></button>
+    <button class="mini-btn mini-play" id="mini-play"><i data-lucide="play" id="mini-play-icon"></i></button>
+    <button class="mini-btn" id="mini-next"><i data-lucide="skip-forward"></i></button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="sheet" id="profile-sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-body">
+    <div class="profile-photo-row">
+      <div class="profile-photo-ring">
+        <img id="profile-photo" src="" alt="">
+      </div>
+    </div>
+    <div class="profile-email" id="profile-email"></div>
+    <input type="text" class="modal-input" id="profile-name-input" placeholder="Your name" autocomplete="off">
+    <button class="modal-btn primary" id="profile-save-btn">Save Changes</button>
+    <button class="modal-btn logout-btn" id="profile-logout-btn">Log Out</button>
+  </div>
+</div>
+
+<script>
+const menuOpenBtn = document.getElementById('menu-open-btn');
+const sideMenu = document.getElementById('side-menu');
+const menuOverlay = document.getElementById('menu-overlay');
+
+function openMenu() {
+  sideMenu.classList.add('open');
+  menuOverlay.classList.add('open');
+}
+
+function closeMenu() {
+  sideMenu.classList.remove('open');
+  menuOverlay.classList.remove('open');
+}
+
+if(menuOpenBtn) menuOpenBtn.addEventListener('click', openMenu);
+if(menuOverlay) menuOverlay.addEventListener('click', closeMenu);
+</script>
+<script src="../src/music-data.js" defer></script>
+<script type="module" src="../engine/albums-controller.js"></script>
+</body>
+</html>
