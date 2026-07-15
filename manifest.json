@@ -1,82 +1,108 @@
 {
-  "id": "/?utm_source=pwa",
-  "name": "Restify",
+  "id": "/",
+  "name": "Restify Music",
   "short_name": "Restify",
-  "description": "A premium music streaming experience with a modern and immersive listening interface.",
-  "start_url": "./index.html",
-  "scope": "./",
+  "description": "Modern offline-first music streaming experience with immersive playback, albums, artist forums, and premium aesthetics.",
+  "start_url": "/index.html",
+  "scope": "/",
   "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone"
+  ],
   "orientation": "portrait",
   "background_color": "#0a0a0b",
   "theme_color": "#0a0a0b",
   "lang": "en",
   "dir": "ltr",
+
   "categories": [
     "music",
+    "audio",
     "entertainment"
   ],
+
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+
   "prefer_related_applications": false,
+
   "icons": [
     {
-      "src": "icon.svg",
+      "src": "src/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "maskable"
-    },
-    {
-      "src": "icon-192.png",
+      "src": "src/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "icon-512.png",
+      "src": "src/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ],
+
   "screenshots": [
     {
       "src": "screenshots/home.png",
       "sizes": "1080x1920",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Restify Home Screen"
+      "label": "Home Screen"
     },
     {
       "src": "screenshots/player.png",
       "sizes": "1080x1920",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Immersive Music Player"
+      "label": "Music Player"
     },
     {
       "src": "screenshots/desktop-home.png",
       "sizes": "1920x1080",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Restify Desktop Experience"
+      "label": "Desktop Experience"
     }
   ],
+
   "shortcuts": [
     {
-      "name": "Open Home",
+      "name": "Home",
       "short_name": "Home",
-      "description": "Listen to your favorite music tracks",
-      "url": "./index.html",
-      "icons": [
-        {
-          "src": "icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
+      "description": "Open music library",
+      "url": "/index.html"
+    },
+    {
+      "name": "Albums",
+      "short_name": "Albums",
+      "description": "Browse albums",
+      "url": "/pages/albums.html"
+    },
+    {
+      "name": "Announcements",
+      "short_name": "News",
+      "description": "Latest announcements",
+      "url": "/pages/announces.html"
+    },
+    {
+      "name": "Artist Forums",
+      "short_name": "Forums",
+      "description": "Join artist discussions",
+      "url": "/pages/artistforums.html"
     }
-  ]
+  ],
+
+  "file_handlers": [],
+
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
 }
