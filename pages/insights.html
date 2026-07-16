@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Restify — Listening Insights</title>
+<meta name="description" content="Your real-time listening insights on Restify — minutes today, top tracks, streaks and a downloadable insights card.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<style>
+  :root{
+    --bg:#0a0a0b; --bg-soft:#111113;
+    --card:#1a1a1c; --card-hi:#212124;
+    --border:rgba(255,255,255,.08); --border-strong:rgba(255,255,255,.14);
+    --text:#f4efe8; --text-dim:#a6a099; --text-faint:#6d6862;
+    --orange:#ff6a1a; --orange-soft:#ffb37a; --orange-deep:#c2410c;
+    --orange-wash:rgba(255,106,26,.12);
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+    --display:'Unbounded', system-ui, sans-serif;
+    --body:'Plus Jakarta Sans', system-ui, sans-serif;
+    --appbar-h:60px; --player-h:66px; --frame-w:480px;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{
+    margin:0; height:auto; min-height:100%; width:100%;
+    background:radial-gradient(560px 320px at 85% -8%, rgba(255,106,26,.16), transparent 60%), var(--bg);
+    color:var(--text); font-family:var(--body);
+    -webkit-overflow-scrolling:touch; overscroll-behavior-y:contain;
+  }
+  ::selection{ background:var(--orange); color:#160800; }
+  a{ color:inherit; text-decoration:none; }
+  button{ font:inherit; color:inherit; background:none; border:none; cursor:pointer; }
+  ul{ margin:0; padding:0; list-style:none; }
+  :focus-visible{ outline:2px solid var(--orange-soft); outline-offset:3px; border-radius:4px; }
+
+  .frame{ max-width:var(--frame-w); margin:0 auto; min-height:100vh; position:relative;
+    border-left:1px solid var(--border); border-right:1px solid var(--border); background:var(--bg-soft);
+    padding-bottom:calc(var(--player-h) + 18px); }
+
+  /* App bar */
+  .appbar{ position:sticky; top:0; z-index:40; max-width:var(--frame-w); margin:0 auto; height:var(--appbar-h);
+    display:flex; align-items:center; gap:6px; padding:0 8px;
+    background:rgba(10,10,11,.82); backdrop-filter:blur(14px) saturate(140%); -webkit-backdrop-filter:blur(14px) saturate(140%);
+    border-bottom:1px solid var(--border); }
+  .appbar-btn{ width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+    color:var(--text-dim); transition:background .15s ease, color .15s ease; }
+  .appbar-btn:hover{ background:var(--card); color:var(--text); }
+  .appbar-btn svg{ width:20px; height:20px; }
+  .appbar-title{ flex:1; text-align:center; font-family:var(--display); font-size:14px; font-weight:600; letter-spacing:.02em;
+    display:flex; flex-direction:column; line-height:1.2; }
+  .appbar-title small{ font-family:var(--body); font-weight:500; font-size:10.5px; color:var(--text-faint);
+    letter-spacing:.14em; text-transform:uppercase; }
+  .live-pill{ display:flex; align-items:center; gap:6px; padding:0 10px; height:32px; border-radius:999px;
+    background:var(--orange-wash); border:1px solid rgba(255,106,26,.3); font-size:11px; font-weight:700; color:var(--orange-soft); }
+  .live-dot{ width:6px; height:6px; border-radius:50%; background:var(--orange); box-shadow:0 0 8px var(--orange); animation:pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{ opacity:1; transform:scale(1);} 50%{ opacity:.4; transform:scale(.7);} }
+
+  /* Drawer (simple quick nav) */
+  .drawer-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,.6); opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:49; }
+  .drawer{ position:fixed; top:0; left:0; bottom:0; width:min(280px, 80vw); background:var(--bg-soft);
+    border-right:1px solid var(--border-strong); transform:translateX(-100%); transition:transform .25s cubic-bezier(.2,.8,.2,1);
+    z-index:50; padding:18px 14px; }
+  body.drawer-open .drawer{ transform:translateX(0); }
+  body.drawer-open .drawer-backdrop{ opacity:1; pointer-events:auto; }
+  .drawer-head{ display:flex; align-items:center; justify-content:space-between; padding:4px 6px 16px; }
+  .drawer-head .brand{ display:flex; align-items:center; gap:8px; font-family:var(--display); font-weight:700; font-size:13px; }
+  .drawer-head .brand .dot{ width:9px; height:9px; border-radius:50%; background:var(--orange); box-shadow:0 0 10px var(--orange); }
+  .drawer-close{ width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center; color:var(--text-dim); }
+  .drawer-close:hover{ background:var(--card); color:var(--text); }
+  .nav-link{ display:flex; align-items:center; gap:12px; padding:11px 8px; border-radius:10px; color:var(--text-dim); font-size:14px; font-weight:500; }
+  .nav-link svg{ width:18px; height:18px; }
+  .nav-link:hover{ background:var(--card); color:var(--text); }
+  .nav-link.active{ color:var(--orange-soft); background:var(--orange-wash); }
+
+  main{ padding:20px 18px 6px; }
+
+  /* Hero */
+  .insights-hero{ margin-bottom:22px; }
+  .eyebrow{ display:inline-flex; align-items:center; gap:7px; font-family:var(--mono); font-size:11px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--orange-soft); background:var(--orange-wash); border:1px solid rgba(255,106,26,.28);
+    padding:5px 10px; border-radius:999px; margin-bottom:12px; }
+  .eyebrow svg{ width:12px; height:12px; }
+  h1{ font-family:var(--display); font-weight:700; font-size:24px; line-height:1.2; margin:0 0 6px; letter-spacing:-.01em; }
+  h1 em{ font-style:normal; color:var(--orange); }
+  .insights-hero p{ color:var(--text-dim); font-size:13.5px; margin:0; }
+
+  /* Stat grid */
+  .stat-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:22px; }
+  .stat-card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; }
+  .stat-card .top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .stat-card svg{ width:16px; height:16px; color:var(--orange); }
+  .stat-card .v{ font-family:var(--display); font-size:22px; color:var(--text); }
+  .stat-card .v span{ font-size:12px; color:var(--text-faint); font-family:var(--body); font-weight:600; margin-left:3px; }
+  .stat-card .l{ font-size:11px; color:var(--text-faint); margin-top:3px; }
+  .stat-card .trend{ font-size:10.5px; color:var(--orange-soft); font-weight:700; }
+
+  /* Now spinning */
+  .now-card{ background:linear-gradient(160deg, var(--card-hi), var(--card)); border:1px solid var(--border);
+    border-radius:16px; padding:16px; display:flex; align-items:center; gap:14px; margin-bottom:22px; }
+  .now-vinyl{ width:56px; height:56px; border-radius:50%; flex:none;
+    background:repeating-radial-gradient(circle at 50% 50%, #17110c 0 2px, #0e0b08 3px 6px);
+    box-shadow:0 0 0 1px var(--border); animation:spin 6s linear infinite; }
+  .now-vinyl::after{ content:''; position:absolute; }
+  body.paused .now-vinyl{ animation-play-state:paused; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  @media (prefers-reduced-motion:reduce){ .now-vinyl{ animation:none; } }
+  .now-info{ flex:1; min-width:0; }
+  .now-label{ font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--orange-soft); margin-bottom:3px; }
+  .now-title{ font-size:14px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .now-artist{ font-size:12px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .eq{ display:flex; align-items:flex-end; gap:3px; height:20px; margin-top:8px; }
+  .eq i{ width:3px; background:var(--orange); border-radius:2px; animation:eq 900ms ease-in-out infinite; }
+  .eq i:nth-child(1){ height:40%; animation-delay:0ms; }
+  .eq i:nth-child(2){ height:90%; animation-delay:120ms; }
+  .eq i:nth-child(3){ height:60%; animation-delay:240ms; }
+  .eq i:nth-child(4){ height:100%; animation-delay:360ms; }
+  .eq i:nth-child(5){ height:50%; animation-delay:480ms; }
+  @keyframes eq{ 0%,100%{ transform:scaleY(.4);} 50%{ transform:scaleY(1);} }
+  body.paused .eq i{ animation-play-state:paused; transform:scaleY(.25); }
+
+  /* Section */
+  .section{ margin-bottom:26px; }
+  .section-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  .section-head h2{ font-family:var(--display); font-size:13.5px; margin:0; }
+  .section-head span{ font-family:var(--mono); font-size:10.5px; color:var(--text-faint); }
+
+  /* Weekly bars */
+  .bars{ display:flex; align-items:flex-end; gap:8px; height:120px; background:var(--card); border:1px solid var(--border);
+    border-radius:14px; padding:16px 14px 12px; }
+  .bar-col{ flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; height:100%; justify-content:flex-end; }
+  .bar-col .bar{ width:100%; max-width:22px; border-radius:6px 6px 3px 3px; background:linear-gradient(180deg, var(--orange-soft), var(--orange-deep));
+    transition:height .6s cubic-bezier(.2,.8,.2,1); }
+  .bar-col .day{ font-size:9.5px; color:var(--text-faint); font-family:var(--mono); }
+  .bar-col.today .bar{ background:linear-gradient(180deg, #fff, var(--orange)); }
+  .bar-col.today .day{ color:var(--orange-soft); font-weight:700; }
+
+  /* Top tracks */
+  .track-row{ display:flex; align-items:center; gap:12px; padding:10px 4px; border-bottom:1px solid var(--border); }
+  .track-row:last-child{ border-bottom:none; }
+  .track-row .rank{ font-family:var(--mono); font-size:13px; color:var(--text-faint); width:18px; flex:none; }
+  .track-row.top .rank{ color:var(--orange); }
+  .track-thumb{ width:38px; height:38px; border-radius:9px; flex:none;
+    background:linear-gradient(145deg, var(--orange-soft), var(--orange-deep)); display:flex; align-items:center; justify-content:center; }
+  .track-thumb svg{ width:16px; height:16px; color:#160800; }
+  .track-meta{ flex:1; min-width:0; }
+  .track-meta .t{ font-size:13.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .track-meta .a{ font-size:11.5px; color:var(--text-faint); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .track-plays{ font-family:var(--mono); font-size:11px; color:var(--text-dim); flex:none; }
+
+  /* Genre chips */
+  .genre-row{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .genre-row .name{ width:76px; flex:none; font-size:12.5px; color:var(--text-dim); }
+  .genre-row .track{ flex:1; height:8px; border-radius:999px; background:var(--card); overflow:hidden; border:1px solid var(--border); }
+  .genre-row .fill{ height:100%; border-radius:999px; background:linear-gradient(90deg, var(--orange-deep), var(--orange)); transition:width .8s ease; }
+  .genre-row .pct{ width:34px; flex:none; text-align:right; font-family:var(--mono); font-size:11px; color:var(--text-faint); }
+
+  /* Shareable card */
+  .share-wrap{ display:flex; flex-direction:column; align-items:center; }
+  .insight-card{
+    width:100%; max-width:340px; aspect-ratio:9/14; border-radius:22px; position:relative; overflow:hidden;
+    background:
+      radial-gradient(240px 200px at 100% 0%, rgba(255,106,26,.35), transparent 60%),
+      radial-gradient(200px 180px at 0% 100%, rgba(255,106,26,.18), transparent 60%),
+      linear-gradient(180deg, #141013, #0a0809);
+    border:1px solid var(--border-strong);
+    padding:22px; display:flex; flex-direction:column;
+    box-shadow:0 20px 50px rgba(0,0,0,.55);
+  }
+  .insight-card .ic-mark{ display:flex; align-items:center; gap:7px; font-family:var(--display); font-weight:700; font-size:12px; }
+  .insight-card .ic-mark .dot{ width:8px; height:8px; border-radius:50%; background:var(--orange); box-shadow:0 0 8px var(--orange); }
+  .insight-card .ic-date{ font-family:var(--mono); font-size:9.5px; color:var(--text-faint); margin-top:2px; }
+  .insight-card .ic-vinyl{ align-self:center; width:104px; height:104px; border-radius:50%; margin:18px 0;
+    background:repeating-radial-gradient(circle at 50% 50%, #1c140d 0 2px, #0f0b08 3px 6px);
+    box-shadow:0 0 0 1px var(--border-strong); position:relative; }
+  .insight-card .ic-vinyl::after{ content:''; position:absolute; inset:0; margin:auto; width:32px; height:32px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, var(--orange-soft), var(--orange) 55%, var(--orange-deep)); }
+  .insight-card .ic-headline{ font-family:var(--display); font-size:16px; text-align:center; line-height:1.35; margin-bottom:18px; }
+  .insight-card .ic-headline b{ color:var(--orange-soft); display:block; font-size:18px; margin-top:2px; }
+  .ic-stats{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:auto; }
+  .ic-stats .cell{ background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:12px; padding:10px; }
+  .ic-stats .cell .v{ font-family:var(--display); font-size:15px; color:var(--orange-soft); }
+  .ic-stats .cell .l{ font-size:9.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.06em; margin-top:2px; }
+  .ic-foot{ text-align:center; font-family:var(--mono); font-size:9px; letter-spacing:.1em; color:var(--text-faint); margin-top:14px; text-transform:uppercase; }
+
+  .share-actions{ display:flex; gap:10px; margin-top:16px; width:100%; max-width:340px; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 16px; border-radius:12px; font-weight:700; font-size:13px; flex:1; }
+  .btn svg{ width:16px; height:16px; }
+  .btn-primary{ background:var(--orange); color:#160800; }
+  .btn-primary:hover{ background:var(--orange-soft); }
+  .btn-ghost{ background:var(--card); border:1px solid var(--border-strong); color:var(--text); }
+  .btn-ghost:hover{ border-color:var(--orange); color:var(--orange-soft); }
+
+  /* Persistent mini player — menu/back never touch this */
+  .mini-player{ position:fixed; left:0; right:0; bottom:0; z-index:45; max-width:var(--frame-w); margin:0 auto;
+    height:var(--player-h); background:rgba(17,17,19,.92); backdrop-filter:blur(16px) saturate(140%); -webkit-backdrop-filter:blur(16px) saturate(140%);
+    border-top:1px solid var(--border-strong); display:flex; align-items:center; gap:12px; padding:0 12px; }
+  .mp-vinyl{ width:40px; height:40px; border-radius:50%; flex:none;
+    background:repeating-radial-gradient(circle at 50% 50%, #17110c 0 2px, #0e0b08 3px 6px);
+    box-shadow:0 0 0 1px var(--border); animation:spin 4s linear infinite; }
+  body.paused .mp-vinyl{ animation-play-state:paused; }
+  .mp-meta{ flex:1; min-width:0; }
+  .mp-meta .t{ font-size:12.5px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mp-meta .a{ font-size:11px; color:var(--text-faint); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mp-progress{ position:absolute; top:0; left:0; right:0; height:2px; background:var(--border); }
+  .mp-progress .fill{ height:100%; width:32%; background:var(--orange); }
+  .mp-controls{ display:flex; align-items:center; gap:2px; }
+  .mp-btn{ width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text); }
+  .mp-btn:hover{ background:var(--card); }
+  .mp-btn.play{ background:var(--orange); color:#160800; }
+  .mp-btn.play:hover{ background:var(--orange-soft); }
+  .mp-btn svg{ width:16px; height:16px; }
+
+  .toast{ position:fixed; left:50%; bottom:calc(var(--player-h) + 14px); transform:translate(-50%, 12px);
+    max-width:calc(var(--frame-w) - 40px); background:#161113; border:1px solid rgba(255,106,26,.35);
+    color:var(--text); font-size:12.5px; font-weight:600; padding:11px 16px; border-radius:12px;
+    display:flex; align-items:center; gap:8px; opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease;
+    z-index:60; box-shadow:0 10px 30px rgba(0,0,0,.5); }
+  .toast svg{ width:15px; height:15px; color:var(--orange-soft); }
+  .toast.show{ opacity:1; transform:translate(-50%, 0); }
+
+  @media (min-width:560px){ :root{ --frame-w:520px; } .frame{ box-shadow:0 0 60px rgba(0,0,0,.4); } }
+</style>
+</head>
+<body>
+
+<div class="drawer-backdrop" id="drawer-backdrop"></div>
+<nav class="drawer" id="drawer" aria-label="Quick navigation" aria-hidden="true">
+  <div class="drawer-head">
+    <div class="brand"><span class="dot"></span> Restify</div>
+    <button class="drawer-close" id="drawer-close" aria-label="Close menu"><i data-lucide="x"></i></button>
+  </div>
+  <a class="nav-link" href="index.html"><i data-lucide="home"></i>Home</a>
+  <a class="nav-link" href="search.html"><i data-lucide="search"></i>Search</a>
+  <a class="nav-link" href="library.html"><i data-lucide="list-music"></i>Library</a>
+  <a class="nav-link active" href="insights.html"><i data-lucide="bar-chart-3"></i>Insights</a>
+  <a class="nav-link" href="about.html"><i data-lucide="user-round"></i>About</a>
+</nav>
+
+<div class="frame" id="doc-root">
+
+  <header class="appbar">
+    <a class="appbar-btn" href="index.html" aria-label="Back to app" id="back-btn"><i data-lucide="chevron-left"></i></a>
+    <button class="appbar-btn" id="menu-open" aria-label="Open menu" aria-expanded="false"><i data-lucide="menu"></i></button>
+    <div class="appbar-title">Insights<small>Restify</small></div>
+    <div class="live-pill"><span class="live-dot"></span>LIVE</div>
+  </header>
+
+  <main>
+    <section class="insights-hero">
+      <div class="eyebrow"><i data-lucide="activity"></i> Updated just now</div>
+      <h1>Your listening, <em>live</em>.</h1>
+      <p>Numbers below update as you go — no need to refresh.</p>
+    </section>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="top"><i data-lucide="clock"></i><span class="trend" id="mins-trend">+1</span></div>
+        <div class="v" id="mins-today">128<span>min</span></div>
+        <div class="l">Listened today</div>
+      </div>
+      <div class="stat-card">
+        <div class="top"><i data-lucide="flame"></i><span class="trend">🔥</span></div>
+        <div class="v">14<span>days</span></div>
+        <div class="l">Current streak</div>
+      </div>
+      <div class="stat-card">
+        <div class="top"><i data-lucide="music-4"></i><span class="trend" id="tracks-trend">+1</span></div>
+        <div class="v" id="tracks-today">19<span>tracks</span></div>
+        <div class="l">Played today</div>
+      </div>
+      <div class="stat-card">
+        <div class="top"><i data-lucide="disc-3"></i><span class="trend">Top</span></div>
+        <div class="v" style="font-size:16px">Lo-fi</div>
+        <div class="l">Genre this week</div>
+      </div>
+    </div>
+
+    <div class="now-card">
+      <div class="now-vinyl" aria-hidden="true"></div>
+      <div class="now-info">
+        <div class="now-label">Now playing</div>
+        <div class="now-title">Amber Static</div>
+        <div class="now-artist">Sable Coast</div>
+        <div class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><h2>This week</h2><span>Mon – Sun</span></div>
+      <div class="bars" id="bars"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><h2>Top tracks</h2><span>Last 7 days</span></div>
+      <div id="top-tracks"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><h2>Genre breakdown</h2><span>This month</span></div>
+      <div id="genres"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><h2>Your card</h2><span>Shareable</span></div>
+      <div class="share-wrap">
+        <div class="insight-card" id="insight-card">
+          <div class="ic-mark"><span class="dot"></span>RESTIFY</div>
+          <div class="ic-date" id="ic-date">—</div>
+          <div class="ic-vinyl" aria-hidden="true"></div>
+          <div class="ic-headline">Your top artist this month<b id="ic-artist">Sable Coast</b></div>
+          <div class="ic-stats">
+            <div class="cell"><div class="v" id="ic-mins">2,140</div><div class="l">Minutes</div></div>
+            <div class="cell"><div class="v">14</div><div class="l">Day streak</div></div>
+            <div class="cell"><div class="v" id="ic-track">Amber Static</div><div class="l">Top track</div></div>
+            <div class="cell"><div class="v">Lo-fi</div><div class="l">Top genre</div></div>
+          </div>
+          <div class="ic-foot">restify · listening insights</div>
+        </div>
+        <div class="share-actions">
+          <button class="btn btn-primary" id="download-card"><i data-lucide="download"></i>Download card</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<!-- Persistent mini player: menu / back / drawer never call pause() on this -->
+<div class="mini-player">
+  <div class="mp-progress"><div class="fill" id="mp-fill"></div></div>
+  <div class="mp-vinyl" aria-hidden="true"></div>
+  <div class="mp-meta"><div class="t">Amber Static</div><div class="a">Sable Coast</div></div>
+  <div class="mp-controls">
+    <button class="mp-btn" aria-label="Previous track"><i data-lucide="skip-back"></i></button>
+    <button class="mp-btn play" id="play-toggle" aria-label="Pause"><i data-lucide="pause"></i></button>
+    <button class="mp-btn" aria-label="Next track"><i data-lucide="skip-forward"></i></button>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i data-lucide="check-circle"></i><span id="toast-text">Saved</span></div>
+
+<script>
+  const body = document.body;
+
+  /* ---------- Drawer: purely a nav overlay, never touches player state ---------- */
+  const drawer = document.getElementById('drawer');
+  function openDrawer(){ body.classList.add('drawer-open'); drawer.setAttribute('aria-hidden','false'); document.getElementById('menu-open').setAttribute('aria-expanded','true'); }
+  function closeDrawer(){ body.classList.remove('drawer-open'); drawer.setAttribute('aria-hidden','true'); document.getElementById('menu-open').setAttribute('aria-expanded','false'); }
+  document.getElementById('menu-open').addEventListener('click', openDrawer);
+  document.getElementById('drawer-close').addEventListener('click', closeDrawer);
+  document.getElementById('drawer-backdrop').addEventListener('click', closeDrawer);
+  // back-btn is a plain link (href="index.html") — intentionally has no JS handler,
+  // so it never pauses/resets the mini player before navigating.
+
+  /* ---------- Mini player: only the play/pause button changes its state ---------- */
+  let isPlaying = true;
+  const playBtn = document.getElementById('play-toggle');
+  function renderPlayState(){
+    body.classList.toggle('paused', !isPlaying);
+    playBtn.setAttribute('aria-label', isPlaying ? 'Pause' : 'Play');
+    playBtn.innerHTML = isPlaying ? '<i data-lucide="pause"></i>' : '<i data-lucide="play"></i>';
+    if(window.lucide) lucide.createIcons();
+  }
+  playBtn.addEventListener('click', ()=>{ isPlaying = !isPlaying; renderPlayState(); });
+
+  let progress = 32;
+  setInterval(()=>{
+    if(!isPlaying) return;
+    progress = progress >= 100 ? 0 : progress + 0.6;
+    document.getElementById('mp-fill').style.width = progress + '%';
+  }, 400);
+
+  /* ---------- Real-time-feeling insight counters ---------- */
+  let minsToday = 128, tracksToday = 19;
+  function bump(){
+    minsToday += Math.random() > 0.5 ? 1 : 0;
+    if(Math.random() > 0.75) tracksToday += 1;
+    document.getElementById('mins-today').innerHTML = minsToday + '<span>min</span>';
+    document.getElementById('tracks-today').innerHTML = tracksToday + '<span>tracks</span>';
+    document.getElementById('mins-trend').textContent = '+' + (Math.floor(Math.random()*2)+1);
+  }
+  setInterval(()=>{ if(isPlaying) bump(); }, 4000);
+
+  /* ---------- Weekly bars ---------- */
+  const week = [
+    {d:'Mon', m:118}, {d:'Tue', m:95}, {d:'Wed', m:142}, {d:'Thu', m:80},
+    {d:'Fri', m:160}, {d:'Sat', m:205}, {d:'Sun', m:128}
+  ];
+  const maxM = Math.max(...week.map(w=>w.m));
+  document.getElementById('bars').innerHTML = week.map((w,i)=>`
+    <div class="bar-col ${i===6?'today':''}">
+      <div class="bar" style="height:${(w.m/maxM*100)}%"></div>
+      <div class="day">${w.d}</div>
+    </div>`).join('');
+
+  /* ---------- Top tracks ---------- */
+  const tracks = [
+    {t:'Amber Static', a:'Sable Coast', p:41},
+    {t:'Low Tide Radio', a:'Marrow & June', p:33},
+    {t:'Paper Weather', a:'Halide', p:29},
+    {t:'Glass Rooms', a:'Sable Coast', p:24},
+    {t:'Nightbus', a:'Ochre Lines', p:18}
+  ];
+  document.getElementById('top-tracks').innerHTML = tracks.map((tr,i)=>`
+    <div class="track-row ${i===0?'top':''}">
+      <div class="rank">${String(i+1).padStart(2,'0')}</div>
+      <div class="track-thumb"><i data-lucide="music"></i></div>
+      <div class="track-meta"><div class="t">${tr.t}</div><div class="a">${tr.a}</div></div>
+      <div class="track-plays">${tr.p} plays</div>
+    </div>`).join('');
+
+  /* ---------- Genres ---------- */
+  const genres = [ {n:'Lo-fi', p:38}, {n:'Indie', p:27}, {n:'Ambient', p:19}, {n:'Electronic', p:16} ];
+  document.getElementById('genres').innerHTML = genres.map(g=>`
+    <div class="genre-row">
+      <div class="name">${g.n}</div>
+      <div class="track"><div class="fill" style="width:${g.p}%"></div></div>
+      <div class="pct">${g.p}%</div>
+    </div>`).join('');
+
+  /* ---------- Card date ---------- */
+  document.getElementById('ic-date').textContent = new Date().toLocaleDateString('en-US', { month:'long', year:'numeric' });
+
+  /* ---------- Toast ---------- */
+  let toastTimer;
+  function showToast(text){
+    const t = document.getElementById('toast');
+    document.getElementById('toast-text').textContent = text;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=> t.classList.remove('show'), 2600);
+  }
+
+  /* ---------- Download the shareable card as an image ---------- */
+  document.getElementById('download-card').addEventListener('click', async ()=>{
+    const el = document.getElementById('insight-card');
+    if(typeof html2canvas === 'undefined'){ showToast('Could not load image renderer'); return; }
+    try{
+      const canvas = await html2canvas(el, { backgroundColor:null, scale:3 });
+      const url = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'restify-insights-card.png';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      showToast('Card downloaded');
+    }catch(err){
+      showToast('Download failed — try again');
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', () => { if (window.lucide) lucide.createIcons(); });
+  window.addEventListener('load', () => { if (window.lucide) lucide.createIcons(); });
+</script>
+
+</body>
+</html>
