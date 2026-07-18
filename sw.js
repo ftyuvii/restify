@@ -2,10 +2,9 @@ const CACHE_NAME = 'restify-shell-v1';
 const SHELL_ASSETS = [
   './index.html',
   'src/style.css',
-  'src/app.js',
-  'src/music-data.js',
+  'engine/app.js',
   './manifest.json',
-  './icon.svg'
+  'src/icon.svg'
 ];
 
 self.addEventListener('install', (event) => {
